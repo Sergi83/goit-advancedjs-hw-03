@@ -1,8 +1,14 @@
-// import axios
-import axios from 'axios';
+//
+import { fetchBreeds, fetchCatByBreed } from './cat-api';
 
-// add key to all headers
-axios.defaults.headers.common['x-api-key'] =
-  'live_SpY3U6UyCgy2bjzR7DbU0oLAhvNCZywFRPbwHdfvxbdcdP5NnP0R6vdYHdS1yx2N';
+//
+
+fetchBreeds()
+  .then(data => console.log(data))
+  .catch(err => console.log(err));
+
+fetchCatByBreed('aege')
+  .then(data => console.log(data))
+  .catch(err => console.log(err));
 
 //
