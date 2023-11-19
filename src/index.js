@@ -1,5 +1,13 @@
 // import functions that get data from api
 import { fetchBreeds, fetchCatByBreed } from './cat-api';
+// library for select and option
+import SlimSelect from 'slim-select';
+
+// add library for alert messages
+import iziToast from 'izitoast';
+
+// Додатковий імпорт стилів
+import 'izitoast/dist/css/iziToast.min.css';
 
 // get elements
 const refs = {
@@ -21,32 +29,50 @@ refs.select.addEventListener('change', handlerSelect);
 
 // on change event render api data about the cat's breed choosen from selected options
 function handlerSelect(e) {
-  //   e.preventDefault();
+  e.preventDefault();
   // show loader message
   isLoading && loaderHandler();
   // clear cat info
   refs.catInfo.innerHTML = '';
 
-  fetchCatByBreed(e.currentTarget.value).then(data => {
-    // // show loader message
-    // show loader message
-    isLoading && loaderHandler();
+  fetchCatByBreed(e.currentTarget.value)
+    .then(data => {
+      // // show loader message
+      // show loader message
+      isLoading && loaderHandler();
 
-    if (!data) {
+      if (!data) {
+        //   hide loader message
+        isLoading = false;
+        // show text about error
+        errorHandler();
+        // error message
+        //   iziToast.error({
+        //     position: 'topRight',
+        //     message: 'Oops! Something went wrong! Try reloading the page!',
+        //     messageColor: 'white',
+        //     backgroundColor: 'red',
+        //   });
+        //   throw new Error();
+      }
+
       //   hide loader message
-      isLoading = false;
-      // show text about error
+      hideLoaderErrorShowBreedInfo();
+      // render the cat info
+      refs.catInfo.insertAdjacentHTML('beforeend', createMarkupBreedInfo(data));
+    })
+    .catch(err => {
+      console.log(err);
+      // error message
+      iziToast.error({
+        position: 'topRight',
+        message: 'Oops! Something went wrong! Try reloading the page!',
+        messageColor: 'white',
+        backgroundColor: 'red',
+      });
       errorHandler();
       throw new Error();
-    }
-
-    //   hide loader message
-    hideLoaderErrorShowBreedInfo();
-    // render the cat info
-    refs.catInfo.insertAdjacentHTML('beforeend', createMarkupBreedInfo(data));
-  });
-
-  console.log(e.target.value);
+    });
 }
 
 // add options (with cat names from api) to select
@@ -60,13 +86,35 @@ fetchBreeds()
     }
     // hide loader message
     hideLoaderErrorShowBreedInfo();
-    //   add breeds options to select
+    // //   add breeds options to select
+    // const selectLib = new SlimSelect({
+    //   select: '.breed-select',
+
+    //   settings: {
+    //     closeOnSelect: true,
+    //     alwaysOpen: false,
+    //     contentPosition: 'relative',
+    //   },
+    //   data: data.map(catBreed => ({
+    //     html: `<option value=${catBreed.id}>${catBreed.name}</option>`,
+    //     value: catBreed.id,
+    //     text: catBreed.name,
+    //   })),
+    // });
+
     refs.select.insertAdjacentHTML('beforeend', createMarkupOptions(data));
     // // show select
     // refs.select.classList.remove('hide');
   })
   .catch(err => {
     console.log(err);
+    // error message
+    iziToast.error({
+      position: 'topRight',
+      message: 'Oops! Something went wrong! Try reloading the page!',
+      messageColor: 'white',
+      backgroundColor: 'red',
+    });
     errorHandler();
   });
 
@@ -84,7 +132,7 @@ function createMarkupBreedInfo(data) {
   //
 
   return `<h2>${name}</h2>
-    <img src="${url}" alt="${name}"   loading="lazy"/>    
+    <img src="${url}" alt="${name}" class="cat-img"  loading="lazy"/>    
     <p class="description">${description}</p>
     <h3>Temperament: ${temperament}</h3> `;
 }
