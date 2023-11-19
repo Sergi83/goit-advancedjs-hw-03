@@ -84,8 +84,8 @@ function createMarkupBreedInfo(data) {
   //
 
   return `<h2>${name}</h2>
-    <img src="${url}" alt="${name}" width="300" />    
-    <p>${description}</p>
+    <img src="${url}" alt="${name}"   loading="lazy"/>    
+    <p class="description">${description}</p>
     <h3>Temperament: ${temperament}</h3> `;
 }
 
